@@ -39,15 +39,13 @@ const SearchResult = () => {
         setDefinition(response.data.choices[0].message.content.trim());
       } catch (err) {
         console.error('Error fetching definition:', err);
-        if (err.response) {
-          // The request was made and the server responded with a status code
-          // that falls out of the range of 2xx
-          setError(`Error ${err.response.status}: ${err.response.data.error || 'Unknown error'}`);
+        if (err.response && err.response.status === 401) {
+          setError('Error 401: Unauthorized. Your API key may be invalid or expired.');
+        } else if (err.response) {
+          setError(`Error ${err.response.status}: ${err.response.data.error?.message || 'Unknown error'}`);
         } else if (err.request) {
-          // The request was made but no response was received
           setError('No response received from the server. Please check your internet connection.');
         } else {
-          // Something happened in setting up the request that triggered an Error
           setError(`Error: ${err.message}`);
         }
       } finally {
@@ -72,7 +70,11 @@ const SearchResult = () => {
           ) : error ? (
             <div className="text-center">
               <p className="text-red-500 mb-2">{error}</p>
-              <p className="text-sm text-gray-500">If this persists, please check your API key or try again later.</p>
+              <p className="text-sm text-gray-500">
+                {error.includes('401') 
+                  ? "Please check your OpenAI API key in the .env file and ensure it's valid and not expired."
+                  : "If this error persists, please try again later or contact support."}
+              </p>
             </div>
           ) : (
             <p className="text-lg text-gray-700">{definition}</p>
