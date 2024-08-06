@@ -13,9 +13,14 @@ const SearchResult = () => {
 
   useEffect(() => {
     const fetchDefinition = async () => {
+      if (!import.meta.env.VITE_OPENAI_API_KEY) {
+        setError('OpenAI API key is not set. Please check your environment variables.');
+        setLoading(false);
+        return;
+      }
+
       try {
         setLoading(true);
-        // Replace this with your actual AI API endpoint
         const response = await axios.post('https://api.openai.com/v1/chat/completions', {
           model: "gpt-3.5-turbo",
           messages: [
@@ -33,7 +38,18 @@ const SearchResult = () => {
         });
         setDefinition(response.data.choices[0].message.content.trim());
       } catch (err) {
-        setError('Failed to fetch definition. Please try again.');
+        console.error('Error fetching definition:', err);
+        if (err.response) {
+          // The request was made and the server responded with a status code
+          // that falls out of the range of 2xx
+          setError(`Error ${err.response.status}: ${err.response.data.error || 'Unknown error'}`);
+        } else if (err.request) {
+          // The request was made but no response was received
+          setError('No response received from the server. Please check your internet connection.');
+        } else {
+          // Something happened in setting up the request that triggered an Error
+          setError(`Error: ${err.message}`);
+        }
       } finally {
         setLoading(false);
       }
@@ -54,7 +70,10 @@ const SearchResult = () => {
               <ThreeDots color="#3B82F6" height={50} width={50} />
             </div>
           ) : error ? (
-            <p className="text-red-500 text-center">{error}</p>
+            <div className="text-center">
+              <p className="text-red-500 mb-2">{error}</p>
+              <p className="text-sm text-gray-500">If this persists, please check your API key or try again later.</p>
+            </div>
           ) : (
             <p className="text-lg text-gray-700">{definition}</p>
           )}
