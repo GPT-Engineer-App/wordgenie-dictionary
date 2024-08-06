@@ -16,18 +16,22 @@ const SearchResult = () => {
       try {
         setLoading(true);
         // Replace this with your actual AI API endpoint
-        const response = await axios.post('https://api.openai.com/v1/engines/davinci-codex/completions', {
-          prompt: `Define the word "${word}":`,
+        const response = await axios.post('https://api.openai.com/v1/chat/completions', {
+          model: "gpt-3.5-turbo",
+          messages: [
+            { role: "system", content: "You are a helpful assistant that provides concise definitions for words." },
+            { role: "user", content: `Define the word "${word}" in a concise manner:` }
+          ],
           max_tokens: 100,
           n: 1,
-          stop: null,
           temperature: 0.7,
         }, {
           headers: {
-            'Authorization': `Bearer YOUR_OPENAI_API_KEY_HERE`,
+            'Authorization': `Bearer ${import.meta.env.VITE_OPENAI_API_KEY}`,
             'Content-Type': 'application/json',
           },
         });
+        setDefinition(response.data.choices[0].message.content.trim());
         setDefinition(response.data.choices[0].text.trim());
       } catch (err) {
         setError('Failed to fetch definition. Please try again.');
