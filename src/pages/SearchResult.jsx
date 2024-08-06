@@ -32,7 +32,6 @@ const SearchResult = () => {
           },
         });
         setDefinition(response.data.choices[0].message.content.trim());
-        setDefinition(response.data.choices[0].text.trim());
       } catch (err) {
         setError('Failed to fetch definition. Please try again.');
       } finally {
