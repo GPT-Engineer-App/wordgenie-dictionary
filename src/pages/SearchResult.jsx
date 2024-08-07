@@ -37,7 +37,9 @@ const SearchResult = () => {
 
   const findSignificantWord = (text) => {
     const words = text.split(/\s+/);
-    const significantWords = words.filter(word => word.length > 4);
+    const significantWords = words
+      .map(word => word.replace(/^[^a-zA-Z]+|[^a-zA-Z]+$/g, ''))
+      .filter(word => word.length > 4);
     if (significantWords.length > 0) {
       setSignificantWord(significantWords[0]);
     }
