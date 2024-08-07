@@ -38,11 +38,10 @@ const SearchResult = () => {
 
   const findSignificantWord = (text) => {
     const words = text.split(/\s+/);
-    const significantWords = words
-      .map(word => word.replace(/^[^a-zA-Z]+|[^a-zA-Z]+$/g, ''))
-      .filter(word => word.length > 4);
-    if (significantWords.length > 0) {
-      setSignificantWord(significantWords[0]);
+    const commonWords = new Set(['the', 'a', 'an', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for', 'of', 'with', 'by', 'from', 'up', 'about', 'into', 'over', 'after']);
+    const uncommonWords = words.filter(word => !commonWords.has(word.toLowerCase()) && word.length > 2);
+    if (uncommonWords.length > 0) {
+      setSignificantWord(uncommonWords[0]);
     }
   };
 
@@ -148,15 +147,19 @@ const SearchResult = () => {
               <div className="mt-4 p-4 bg-gray-100 rounded-lg">
                 <h3 className="text-lg font-semibold mb-2">Definition:</h3>
                 <p>
-                  {definition.split(' ').map((word, index) => 
-                    word.toLowerCase() === significantWord.toLowerCase() ? (
+                  {definition.split(/(\s+)/).map((part, index) => {
+                    if (/\s+/.test(part)) {
+                      return part; // Return spaces and newlines as is
+                    }
+                    const word = part.replace(/^[^a-zA-Z]+|[^a-zA-Z]+$/g, '');
+                    return word.toLowerCase() === significantWord.toLowerCase() ? (
                       <Popover key={index}>
                         <PopoverTrigger asChild>
                           <span 
                             className="cursor-pointer font-bold text-blue-600 hover:underline"
                             onClick={fetchSignificantWordDefinition}
                           >
-                            {word}
+                            {part}
                           </span>
                         </PopoverTrigger>
                         <PopoverContent className="w-80">
@@ -164,10 +167,8 @@ const SearchResult = () => {
                           <p>{significantWordDefinition || 'Loading...'}</p>
                         </PopoverContent>
                       </Popover>
-                    ) : (
-                      `${word} `
-                    )
-                  )}
+                    ) : part
+                  })}
                 </p>
               </div>
             )}
