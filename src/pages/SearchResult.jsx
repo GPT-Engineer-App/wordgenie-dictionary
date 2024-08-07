@@ -108,7 +108,7 @@ const SearchResult = () => {
     const handleKeyPress = (e) => {
       if (stage === 'input') {
         if (e.key === 'Enter') {
-          handleSubmit(e);
+          handleSubmit();
         } else if (e.key === 'Backspace') {
           setUserInput((prev) => prev.slice(0, -1));
         } else if (e.key.length === 1) {
@@ -121,13 +121,11 @@ const SearchResult = () => {
     return () => window.removeEventListener('keydown', handleKeyPress);
   }, [stage, userInput]);
 
-  const handleSubmit = (e) => {
-    if (e) e.preventDefault();
+  const handleSubmit = () => {
     const isCorrect = userInput.trim().toLowerCase() === decodeURIComponent(word).toLowerCase();
     setResult(isCorrect);
-    if (isCorrect) {
-      fetchDefinition(decodeURIComponent(word));
-    }
+    fetchDefinition(decodeURIComponent(word));
+    setStage('result');
   };
 
   const handleFlashAgain = () => {
@@ -165,48 +163,56 @@ const SearchResult = () => {
             <div className="text-6xl font-bold text-white">{decodeURIComponent(word)}</div>
           )}
           {stage === 'input' && (
-            <div className="text-6xl font-bold text-white flex items-center">
-              {userInput}
-              {cursorVisible && <span className="animate-blink">|</span>}
+            <div className="flex flex-col items-center">
+              <div className="text-6xl font-bold text-white flex items-center">
+                {userInput}
+                {cursorVisible && <span className="animate-blink">|</span>}
+              </div>
+              <p className="text-sm text-gray-400 mt-4">Type what you just saw and then press Enter</p>
+            </div>
+          )}
+          {stage === 'result' && (
+            <div className="text-center">
+              <div className={`text-xl font-bold mb-4 ${result ? 'text-green-400' : 'text-red-400'}`}>
+                {result ? 'Correct!' : 'Incorrect.'}
+              </div>
+              <div className="text-2xl font-bold text-white mb-4">
+                The word was: {decodeURIComponent(word)}
+              </div>
+              {definition && (
+                <div className="mt-4 p-4 bg-gray-800 rounded-lg text-white max-w-2xl">
+                  <h3 className="text-lg font-semibold mb-2">Definition:</h3>
+                  <p>
+                    {definition.split(/(\s+)/).map((part, index) => {
+                      if (/\s+/.test(part)) {
+                        return part;
+                      }
+                      const word = part.replace(/^[^a-zA-Z]+|[^a-zA-Z]+$/g, '');
+                      const isSignificant = word.toLowerCase() === significantWord.toLowerCase();
+                      return isSignificant ? (
+                        <Popover key={index}>
+                          <PopoverTrigger asChild>
+                            <span 
+                              className="cursor-pointer font-bold text-blue-400 hover:underline"
+                              onClick={() => fetchSignificantWordDefinition()}
+                            >
+                              {part}
+                            </span>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-80 bg-gray-700 text-white border-gray-600">
+                            <h4 className="font-semibold mb-2">{word}</h4>
+                            <p>{significantWordDefinition || 'Loading...'}</p>
+                          </PopoverContent>
+                        </Popover>
+                      ) : part;
+                    })}
+                  </p>
+                </div>
+              )}
             </div>
           )}
         </motion.div>
       </AnimatePresence>
-      {result !== null && (
-        <div className={`text-center text-xl font-bold mt-8 ${result ? 'text-green-400' : 'text-red-400'}`}>
-          {result ? 'Correct!' : 'Incorrect. Try again!'}
-        </div>
-      )}
-      {result && definition && (
-        <div className="mt-4 p-4 bg-gray-800 rounded-lg text-white max-w-2xl">
-          <h3 className="text-lg font-semibold mb-2">Definition:</h3>
-          <p>
-            {definition.split(/(\s+)/).map((part, index) => {
-              if (/\s+/.test(part)) {
-                return part; // Return spaces and newlines as is
-              }
-              const word = part.replace(/^[^a-zA-Z]+|[^a-zA-Z]+$/g, '');
-              const isSignificant = word.toLowerCase() === significantWord.toLowerCase();
-              return isSignificant ? (
-                <Popover key={index}>
-                  <PopoverTrigger asChild>
-                    <span 
-                      className="cursor-pointer font-bold text-blue-400 hover:underline"
-                      onClick={() => fetchSignificantWordDefinition()}
-                    >
-                      {part}
-                    </span>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-80 bg-gray-700 text-white border-gray-600">
-                    <h4 className="font-semibold mb-2">{word}</h4>
-                    <p>{significantWordDefinition || 'Loading...'}</p>
-                  </PopoverContent>
-                </Popover>
-              ) : part;
-            })}
-          </p>
-        </div>
-      )}
       <div className="mt-8 space-x-4">
         <Button onClick={handleFlashAgain} className="bg-emerald-700 hover:bg-emerald-800">
           <Zap className="mr-2 h-4 w-4" /> Flash Again
