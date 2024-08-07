@@ -164,11 +164,11 @@ const SearchResult = () => {
           )}
           {stage === 'input' && (
             <div className="flex flex-col items-center">
-              <div className="text-6xl font-bold text-white flex items-center">
+              <div className="text-6xl font-bold text-white flex items-center h-[60px] overflow-hidden">
                 {userInput}
                 {cursorVisible && <span className="animate-blink">|</span>}
               </div>
-              <p className="text-sm text-gray-400 mt-4">Type what you just saw and then press Enter</p>
+              <p className="text-sm text-gray-400 mt-[60px]">Type what you just saw and then press Enter</p>
             </div>
           )}
           {stage === 'result' && (
@@ -209,18 +209,21 @@ const SearchResult = () => {
                   </p>
                 </div>
               )}
+              <div className="mt-8 space-x-4">
+                <Button onClick={handleFlashAgain} className="bg-emerald-700 hover:bg-emerald-800">
+                  <Zap className="mr-2 h-4 w-4" /> Flash Again
+                </Button>
+                <Link to="/">
+                  <Button className="bg-blue-700 hover:bg-blue-800">Try New Word</Button>
+                </Link>
+                <Link to="/">
+                  <Button className="bg-gray-700 hover:bg-gray-800">Back to Home</Button>
+                </Link>
+              </div>
             </div>
           )}
         </motion.div>
       </AnimatePresence>
-      <div className="mt-8 space-x-4">
-        <Button onClick={handleFlashAgain} className="bg-emerald-700 hover:bg-emerald-800">
-          <Zap className="mr-2 h-4 w-4" /> Flash Again
-        </Button>
-        <Link to="/">
-          <Button className="bg-gray-700 hover:bg-gray-800">Back to Home</Button>
-        </Link>
-      </div>
     </div>
   );
 };
