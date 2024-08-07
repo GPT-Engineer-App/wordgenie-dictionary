@@ -5,6 +5,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Zap } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import axios from 'axios';
 
 const SearchResult = () => {
   const { word } = useParams();
@@ -12,6 +13,22 @@ const SearchResult = () => {
   const [countdown, setCountdown] = useState(3);
   const [userInput, setUserInput] = useState('');
   const [result, setResult] = useState(null);
+  const [definition, setDefinition] = useState('');
+
+  const fetchDefinition = async (word) => {
+    try {
+      const response = await axios.get(`https://api.dictionaryapi.dev/api/v2/entries/en/${word}`);
+      if (response.data && response.data.length > 0) {
+        const firstMeaning = response.data[0].meanings[0];
+        if (firstMeaning && firstMeaning.definitions.length > 0) {
+          setDefinition(firstMeaning.definitions[0].definition);
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching definition:', error);
+      setDefinition('Definition not found.');
+    }
+  };
 
   useEffect(() => {
     if (stage === 'countdown') {
@@ -34,6 +51,9 @@ const SearchResult = () => {
     e.preventDefault();
     const isCorrect = userInput.trim().toLowerCase() === decodeURIComponent(word).toLowerCase();
     setResult(isCorrect);
+    if (isCorrect) {
+      fetchDefinition(decodeURIComponent(word));
+    }
   };
 
   const handleFlashAgain = () => {
@@ -86,6 +106,12 @@ const SearchResult = () => {
             {result !== null && (
               <div className={`text-center text-xl font-bold ${result ? 'text-green-600' : 'text-red-600'}`}>
                 {result ? 'Correct!' : 'Incorrect. Try again!'}
+              </div>
+            )}
+            {result && definition && (
+              <div className="mt-4 p-4 bg-gray-100 rounded-lg">
+                <h3 className="text-lg font-semibold mb-2">Definition:</h3>
+                <p>{definition}</p>
               </div>
             )}
           </CardContent>
