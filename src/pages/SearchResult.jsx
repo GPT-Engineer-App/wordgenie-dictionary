@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Zap } from "lucide-react";
 
 const SearchResult = () => {
   const { word } = useParams();
@@ -29,6 +30,11 @@ const SearchResult = () => {
     setResult(isCorrect);
   };
 
+  const handleFlashAgain = () => {
+    setShowWord(true);
+    setResult(null);
+  };
+
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-r from-blue-100 to-purple-100 p-4">
       <Card className="w-full max-w-2xl">
@@ -47,7 +53,12 @@ const SearchResult = () => {
                 onChange={(e) => setUserInput(e.target.value)}
                 className="w-full"
               />
-              <Button type="submit" className="w-full">Check</Button>
+              <div className="flex space-x-2">
+                <Button type="submit" className="flex-1">Check</Button>
+                <Button type="button" onClick={handleFlashAgain} className="flex-1">
+                  <Zap className="mr-2 h-4 w-4" /> Flash Again
+                </Button>
+              </div>
             </form>
           )}
           {result !== null && (
