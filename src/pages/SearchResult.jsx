@@ -86,20 +86,10 @@ const SearchResult = () => {
 
   useEffect(() => {
     if (stage === 'countdown') {
-      const startTime = Date.now();
-      const endTime = startTime + 3000; // 3 seconds
-      const updateProgress = () => {
-        const now = Date.now();
-        const remaining = Math.max(0, endTime - now);
-        const newProgress = (remaining / 3000) * 100;
-        setProgress(newProgress);
-        if (newProgress > 0) {
-          requestAnimationFrame(updateProgress);
-        } else {
-          setStage('flash');
-        }
-      };
-      requestAnimationFrame(updateProgress);
+      const timer = setTimeout(() => {
+        setStage('flash');
+      }, 3000);
+      return () => clearTimeout(timer);
     } else if (stage === 'flash') {
       const flashTimer = setTimeout(() => setStage('blackout'), 50);
       return () => clearTimeout(flashTimer);
@@ -138,8 +128,13 @@ const SearchResult = () => {
             className="fixed inset-0 bg-black flex flex-col items-center justify-center z-50"
           >
             {stage === 'countdown' && (
-              <div className="w-[800px] bg-gray-200 rounded-full h-2.5 mb-4">
-                <Progress value={progress} className="w-full h-full bg-blue-600 rounded-full" />
+              <div className="w-[400px] h-2.5 mb-4 bg-gray-400 relative">
+                <motion.div
+                  initial={{ width: "100%" }}
+                  animate={{ width: "0%" }}
+                  transition={{ duration: 3, ease: "linear" }}
+                  className="absolute top-0 left-0 h-full bg-gray-400"
+                />
               </div>
             )}
             {stage === 'flash' && (
