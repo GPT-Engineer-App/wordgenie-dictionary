@@ -135,7 +135,7 @@ const SearchResult = () => {
           className="fixed inset-0 bg-black flex flex-col items-center justify-center z-50"
         >
           {stage === 'countdown' && showCountdownBar && (
-            <div className="w-[400px] h-2.5 mb-4 bg-transparent relative">
+            <div className="absolute top-10 left-1/2 transform -translate-x-1/2 w-[400px] h-2.5 bg-transparent">
               <motion.div
                 initial={{ width: "100%" }}
                 animate={{ width: "0%" }}
@@ -148,22 +148,24 @@ const SearchResult = () => {
               />
             </div>
           )}
-          {stage === 'flash' && (
-            <div className="text-6xl font-bold text-white h-[100px] flex items-center justify-center py-5">
-              {decodeURIComponent(word)}
-            </div>
-          )}
-          {(stage === 'flash' || stage === 'input') && (
-            <div className="flex flex-col items-center w-full">
-              <div className="text-6xl font-bold text-white flex items-center justify-center h-[100px] py-5 relative">
-                {stage === 'input' ? userInput : ''}
-                <span className="absolute right-[-8px] top-1/2 transform -translate-y-1/2 w-[2px] h-[60px] bg-white"></span>
+          <div className="relative w-full h-full flex items-center justify-center">
+            {stage === 'flash' && (
+              <div className="absolute text-6xl font-bold text-white">
+                {decodeURIComponent(word)}
               </div>
-              <p className={`text-sm mt-4 ${stage === 'flash' ? 'text-black' : 'text-gray-400'}`}>
-                Type what you just saw and then press Enter
-              </p>
-            </div>
-          )}
+            )}
+            {(stage === 'flash' || stage === 'input') && (
+              <div className="absolute flex flex-col items-center">
+                <div className="text-6xl font-bold text-white flex items-center justify-center h-[100px] relative">
+                  {stage === 'input' ? userInput : ''}
+                  <span className="absolute right-[-8px] top-1/2 transform -translate-y-1/2 w-[2px] h-[60px] bg-white"></span>
+                </div>
+                <p className={`text-sm mt-4 ${stage === 'flash' ? 'text-black' : 'text-gray-400'}`}>
+                  Type what you just saw and then press Enter
+                </p>
+              </div>
+            )}
+          </div>
           {stage === 'result' && (
             <div className="text-center">
               <div className={`text-xl font-bold mb-4 ${result ? 'text-green-400' : 'text-red-400'}`}>
