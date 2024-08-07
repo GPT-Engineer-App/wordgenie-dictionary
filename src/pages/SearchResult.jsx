@@ -5,6 +5,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Zap } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useMotionValue } from "framer-motion";
 import axios from 'axios';
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Progress } from "@/components/ui/progress";
@@ -13,12 +14,13 @@ const SearchResult = () => {
   const { word } = useParams();
   const [stage, setStage] = useState('countdown');
   const inputRef = useRef(null);
-  const [progress, setProgress] = useState(100);
   const [userInput, setUserInput] = useState('');
   const [result, setResult] = useState(null);
   const [definition, setDefinition] = useState('');
   const [significantWord, setSignificantWord] = useState('');
   const [significantWordDefinition, setSignificantWordDefinition] = useState('');
+  const [showCountdownBar, setShowCountdownBar] = useState(true);
+  const countdownProgress = useMotionValue(100);
 
   const fetchDefinition = useCallback(async (word) => {
     try {
@@ -112,7 +114,8 @@ const SearchResult = () => {
 
   const handleFlashAgain = () => {
     setStage('countdown');
-    setProgress(100);
+    setShowCountdownBar(true);
+    countdownProgress.set(100);
     setResult(null);
     setUserInput('');
   };
@@ -127,13 +130,17 @@ const SearchResult = () => {
             exit={{ opacity: 0 }}
             className="fixed inset-0 bg-black flex flex-col items-center justify-center z-50"
           >
-            {stage === 'countdown' && (
+            {stage === 'countdown' && showCountdownBar && (
               <div className="w-[400px] h-2.5 mb-4 bg-transparent relative">
                 <motion.div
                   initial={{ width: "100%" }}
                   animate={{ width: "0%" }}
                   transition={{ duration: 2.5, ease: "linear" }}
                   className="absolute top-0 left-0 h-full bg-gray-400"
+                  style={{ width: countdownProgress }}
+                  onAnimationComplete={() => {
+                    setShowCountdownBar(false);
+                  }}
                 />
               </div>
             )}
