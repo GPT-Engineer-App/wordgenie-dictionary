@@ -153,13 +153,15 @@ const SearchResult = () => {
               {decodeURIComponent(word)}
             </div>
           )}
-          {stage === 'input' && (
+          {(stage === 'flash' || stage === 'input') && (
             <div className="flex flex-col items-center w-full">
               <div className="text-6xl font-bold text-white flex items-center justify-center h-[100px] py-5 relative">
-                {userInput}
-                <span className="absolute right-0 top-1/2 transform -translate-y-1/2 w-[2px] h-[60px] bg-white"></span>
+                {stage === 'input' ? userInput : ''}
+                <span className="absolute right-[-8px] top-1/2 transform -translate-y-1/2 w-[2px] h-[60px] bg-white"></span>
               </div>
-              <p className="text-sm text-gray-400 mt-4">Type what you just saw and then press Enter</p>
+              <p className={`text-sm mt-4 ${stage === 'flash' ? 'text-black' : 'text-gray-400'}`}>
+                Type what you just saw and then press Enter
+              </p>
             </div>
           )}
           {stage === 'result' && (
