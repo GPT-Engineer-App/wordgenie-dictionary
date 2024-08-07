@@ -172,15 +172,16 @@ const SearchResult = () => {
             )}
           </div>
           {stage === 'result' && (
-            <div className="text-center">
-              <div className={`text-xl font-bold mb-4 ${result ? 'text-green-400' : 'text-red-400'}`}>
-                {result ? 'Correct!' : 'Incorrect.'}
-              </div>
-              <div className="text-2xl font-bold text-white mb-4">
-                The word was: {decodeURIComponent(word)}
-              </div>
-              {definition && (
-                <div className="mt-4 p-4 bg-gray-800 rounded-lg text-white max-w-2xl">
+            <div className="flex flex-col items-center justify-center h-full text-center">
+              <div className="max-w-2xl w-full">
+                <div className={`text-xl font-bold mb-4 ${result ? 'text-green-400' : 'text-red-400'}`}>
+                  {result ? 'Correct!' : 'Incorrect.'}
+                </div>
+                <div className="text-2xl font-bold text-white mb-4">
+                  The word was: {decodeURIComponent(word)}
+                </div>
+                {definition && (
+                  <div className="mt-4 p-4 bg-gray-800 rounded-lg text-white">
                   <h3 className="text-lg font-semibold mb-2">Definition:</h3>
                   <p>
                     {definition.split(/(\s+)/).map((part, index) => {
@@ -209,16 +210,17 @@ const SearchResult = () => {
                   </p>
                 </div>
               )}
-              <div className="mt-8 space-x-4">
-                <Button onClick={handleFlashAgain} className="bg-emerald-700 hover:bg-emerald-800">
-                  <Zap className="mr-2 h-4 w-4" /> Flash Again
-                </Button>
-                <Link to="/">
-                  <Button className="bg-blue-700 hover:bg-blue-800">Try New Word</Button>
-                </Link>
-                <Link to="/">
-                  <Button className="bg-gray-700 hover:bg-gray-800">Back to Home</Button>
-                </Link>
+                <div className="mt-8 space-x-4">
+                  <Button onClick={handleFlashAgain} className="bg-emerald-700 hover:bg-emerald-800">
+                    <Zap className="mr-2 h-4 w-4" /> Flash Again
+                  </Button>
+                  <Link to="/">
+                    <Button className="bg-blue-700 hover:bg-blue-800">Try New Word</Button>
+                  </Link>
+                  <Link to="/">
+                    <Button className="bg-gray-700 hover:bg-gray-800">Back to Home</Button>
+                  </Link>
+                </div>
               </div>
             </div>
           )}
