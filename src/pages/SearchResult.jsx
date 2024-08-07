@@ -129,7 +129,7 @@ const SearchResult = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-black">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-emerald-100 via-blue-100 to-purple-100 bg-[length:400%_400%] animate-gradient-xy">
       <AnimatePresence>
         <motion.div
           initial={{ opacity: 0 }}
@@ -172,17 +172,17 @@ const SearchResult = () => {
             )}
           </div>
           {stage === 'result' && (
-            <div className="flex flex-col items-center justify-center h-full text-center">
+            <div className="flex flex-col items-center justify-center h-full text-center bg-white bg-opacity-80 p-8 rounded-lg shadow-lg">
               <div className="max-w-2xl w-full">
-                <div className={`text-xl font-bold mb-4 ${result ? 'text-green-400' : 'text-red-400'}`}>
+                <div className={`text-2xl font-bold mb-4 ${result ? 'text-emerald-600' : 'text-red-600'}`}>
                   {result ? 'Correct!' : 'Incorrect.'}
                 </div>
-                <div className="text-2xl font-bold text-white mb-4">
+                <div className="text-3xl font-bold text-gray-800 mb-4">
                   The word was: {decodeURIComponent(word)}
                 </div>
                 {definition && (
-                  <div className="mt-4 p-4 bg-gray-800 rounded-lg text-white">
-                  <h3 className="text-lg font-semibold mb-2">Definition:</h3>
+                  <div className="mt-4 p-4 bg-emerald-50 rounded-lg text-gray-800 border border-emerald-200">
+                  <h3 className="text-xl font-semibold mb-2 text-emerald-700">Definition:</h3>
                   <p>
                     {definition.split(/(\s+)/).map((part, index) => {
                       if (/\s+/.test(part)) {
@@ -200,8 +200,8 @@ const SearchResult = () => {
                               {part}
                             </span>
                           </PopoverTrigger>
-                          <PopoverContent className="w-80 bg-gray-700 text-white border-gray-600">
-                            <h4 className="font-semibold mb-2">{word}</h4>
+                          <PopoverContent className="w-80 bg-white text-gray-800 border-emerald-200">
+                            <h4 className="font-semibold mb-2 text-emerald-600">{word}</h4>
                             <p>{significantWordDefinition || 'Loading...'}</p>
                           </PopoverContent>
                         </Popover>
@@ -211,14 +211,14 @@ const SearchResult = () => {
                 </div>
               )}
                 <div className="mt-8 space-x-4">
-                  <Button onClick={handleFlashAgain} className="bg-emerald-700 hover:bg-emerald-800">
+                  <Button onClick={handleFlashAgain} className="bg-emerald-700 hover:bg-emerald-800 text-white">
                     <Zap className="mr-2 h-4 w-4" /> Flash Again
                   </Button>
                   <Link to="/">
-                    <Button className="bg-blue-700 hover:bg-blue-800">Try New Word</Button>
+                    <Button className="bg-emerald-600 hover:bg-emerald-700 text-white">Try New Word</Button>
                   </Link>
                   <Link to="/">
-                    <Button className="bg-gray-700 hover:bg-gray-800">Back to Home</Button>
+                    <Button className="bg-emerald-500 hover:bg-emerald-600 text-white">Back to Home</Button>
                   </Link>
                 </div>
               </div>
