@@ -1,4 +1,4 @@
-import { Home, Search } from "lucide-react";
+import { Home, Zap } from "lucide-react";
 import Index from "./pages/Index.jsx";
 import SearchResult from "./pages/SearchResult.jsx";
 
@@ -13,9 +13,9 @@ export const navItems = [
     page: <Index />,
   },
   {
-    title: "Search Result",
-    to: "/search/:word",
-    icon: <Search className="h-4 w-4" />,
+    title: "Word Flash",
+    to: "/flash/:word",
+    icon: <Zap className="h-4 w-4" />,
     page: <SearchResult />,
   },
 ];
