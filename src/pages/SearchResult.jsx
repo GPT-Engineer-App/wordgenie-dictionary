@@ -51,13 +51,13 @@ const SearchResult = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black flex items-center justify-center z-50"
+            className="fixed inset-0 bg-black flex items-end justify-center z-50"
           >
             {stage === 'countdown' && (
-              <div className="text-6xl font-normal text-gray-600">{countdown}</div>
+              <div className="text-6xl font-normal text-gray-800 mb-20">{countdown}</div>
             )}
             {stage === 'flash' && (
-              <div className="text-6xl font-bold text-white">{decodeURIComponent(word)}</div>
+              <div className="text-6xl font-bold text-white absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">{decodeURIComponent(word)}</div>
             )}
           </motion.div>
         )}
