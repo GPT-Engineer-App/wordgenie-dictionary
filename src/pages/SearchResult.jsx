@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
@@ -11,6 +11,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 const SearchResult = () => {
   const { word } = useParams();
   const [stage, setStage] = useState('countdown');
+  const inputRef = useRef(null);
   const [countdown, setCountdown] = useState(3);
   const [userInput, setUserInput] = useState('');
   const [result, setResult] = useState(null);
@@ -76,6 +77,8 @@ const SearchResult = () => {
     } else if (stage === 'blackout') {
       const blackoutTimer = setTimeout(() => setStage('input'), 1000);
       return () => clearTimeout(blackoutTimer);
+    } else if (stage === 'input') {
+      inputRef.current?.focus();
     }
   }, [stage, countdown]);
 
@@ -122,6 +125,7 @@ const SearchResult = () => {
           <CardContent className="space-y-4">
             <form onSubmit={handleSubmit} className="space-y-4">
               <Input
+                ref={inputRef}
                 type="text"
                 placeholder="Type the word you saw..."
                 value={userInput}
