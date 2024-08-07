@@ -158,10 +158,12 @@ const SearchResult = () => {
               </div>
             )}
             {(stage === 'flash' || stage === 'flash-end' || stage === 'input') && (
-              <div className="absolute flex flex-col items-center" style={{ transform: 'translateY(8px)' }}>
+              <div className="absolute flex flex-col items-center" style={{ transform: 'translateY(16px)' }}>
                 <div className="text-6xl font-bold text-white flex items-center justify-center h-[100px] relative">
                   {stage === 'input' ? userInput : ''}
-                  <span className="absolute right-[-8px] top-1/2 transform -translate-y-1/2 w-[2px] h-[60px] bg-white"></span>
+                  {stage === 'input' && (
+                    <span className="absolute right-[-8px] top-1/2 transform -translate-y-1/2 w-[2px] h-[60px] bg-white"></span>
+                  )}
                 </div>
                 <p className={`text-sm mt-4 ${stage === 'input' ? 'text-gray-400' : 'text-black'}`}>
                   Type what you just saw and then press Enter
