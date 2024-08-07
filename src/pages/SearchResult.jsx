@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Zap } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import axios from 'axios';
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 const SearchResult = () => {
   const { word } = useParams();
@@ -14,19 +15,48 @@ const SearchResult = () => {
   const [userInput, setUserInput] = useState('');
   const [result, setResult] = useState(null);
   const [definition, setDefinition] = useState('');
+  const [significantWord, setSignificantWord] = useState('');
+  const [significantWordDefinition, setSignificantWordDefinition] = useState('');
 
-  const fetchDefinition = async (word) => {
+  const fetchDefinition = useCallback(async (word) => {
     try {
       const response = await axios.get(`https://api.dictionaryapi.dev/api/v2/entries/en/${word}`);
       if (response.data && response.data.length > 0) {
         const firstMeaning = response.data[0].meanings[0];
         if (firstMeaning && firstMeaning.definitions.length > 0) {
-          setDefinition(firstMeaning.definitions[0].definition);
+          const def = firstMeaning.definitions[0].definition;
+          setDefinition(def);
+          findSignificantWord(def);
         }
       }
     } catch (error) {
       console.error('Error fetching definition:', error);
       setDefinition('Definition not found.');
+    }
+  }, []);
+
+  const findSignificantWord = (text) => {
+    const words = text.split(/\s+/);
+    const significantWords = words.filter(word => word.length > 4);
+    if (significantWords.length > 0) {
+      setSignificantWord(significantWords[0]);
+    }
+  };
+
+  const fetchSignificantWordDefinition = async () => {
+    if (significantWord) {
+      try {
+        const response = await axios.get(`https://api.dictionaryapi.dev/api/v2/entries/en/${significantWord}`);
+        if (response.data && response.data.length > 0) {
+          const firstMeaning = response.data[0].meanings[0];
+          if (firstMeaning && firstMeaning.definitions.length > 0) {
+            setSignificantWordDefinition(firstMeaning.definitions[0].definition);
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching significant word definition:', error);
+        setSignificantWordDefinition('Definition not found.');
+      }
     }
   };
 
@@ -111,7 +141,28 @@ const SearchResult = () => {
             {result && definition && (
               <div className="mt-4 p-4 bg-gray-100 rounded-lg">
                 <h3 className="text-lg font-semibold mb-2">Definition:</h3>
-                <p>{definition}</p>
+                <p>
+                  {definition.split(' ').map((word, index) => 
+                    word.toLowerCase() === significantWord.toLowerCase() ? (
+                      <Popover key={index}>
+                        <PopoverTrigger asChild>
+                          <span 
+                            className="cursor-pointer font-bold text-blue-600 hover:underline"
+                            onClick={fetchSignificantWordDefinition}
+                          >
+                            {word}
+                          </span>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-80">
+                          <h4 className="font-semibold mb-2">{significantWord}</h4>
+                          <p>{significantWordDefinition || 'Loading...'}</p>
+                        </PopoverContent>
+                      </Popover>
+                    ) : (
+                      `${word} `
+                    )
+                  )}
+                </p>
               </div>
             )}
           </CardContent>
