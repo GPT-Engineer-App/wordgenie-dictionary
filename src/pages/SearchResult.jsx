@@ -135,7 +135,7 @@ const SearchResult = () => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 bg-black flex flex-col items-center justify-center z-50"
+          className="fixed inset-0 bg-black flex items-center justify-center z-50"
         >
           {stage === 'countdown' && showCountdownBar && (
             <div className="absolute top-10 left-1/2 transform -translate-x-1/2 w-[400px] h-2.5 bg-transparent">
@@ -172,7 +172,7 @@ const SearchResult = () => {
             )}
           </div>
           {stage === 'result' && (
-            <div className="flex flex-col items-center justify-center h-full text-center bg-white bg-opacity-80 p-8 rounded-lg shadow-lg">
+            <div className="flex flex-col items-center justify-center text-center bg-white bg-opacity-80 p-8 rounded-lg shadow-lg max-h-[90vh] overflow-y-auto">
               <div className="max-w-2xl w-full">
                 <div className={`text-2xl font-bold mb-4 ${result ? 'text-emerald-600' : 'text-red-600'}`}>
                   {result ? 'Correct!' : 'Incorrect.'}
