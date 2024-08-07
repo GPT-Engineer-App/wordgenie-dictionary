@@ -42,6 +42,12 @@ const SearchResult = () => {
     const uncommonWords = words.filter(word => !commonWords.has(word.toLowerCase()) && word.length > 2);
     if (uncommonWords.length > 0) {
       setSignificantWord(uncommonWords[0]);
+    } else {
+      // If no uncommon words are found, pick the longest word
+      const longestWord = words.reduce((longest, current) => 
+        current.length > longest.length ? current : longest
+      , '');
+      setSignificantWord(longestWord);
     }
   };
 
@@ -152,18 +158,23 @@ const SearchResult = () => {
                       return part; // Return spaces and newlines as is
                     }
                     const word = part.replace(/^[^a-zA-Z]+|[^a-zA-Z]+$/g, '');
-                    return word.toLowerCase() === significantWord.toLowerCase() ? (
+                    const isSignificant = word.toLowerCase() === significantWord.toLowerCase() || 
+                                          (index === 0 && significantWord === ''); // Highlight first word if no significant word found
+                    return isSignificant ? (
                       <Popover key={index}>
                         <PopoverTrigger asChild>
                           <span 
                             className="cursor-pointer font-bold text-blue-600 hover:underline"
-                            onClick={fetchSignificantWordDefinition}
+                            onClick={() => {
+                              setSignificantWord(word);
+                              fetchSignificantWordDefinition();
+                            }}
                           >
                             {part}
                           </span>
                         </PopoverTrigger>
                         <PopoverContent className="w-80">
-                          <h4 className="font-semibold mb-2">{significantWord}</h4>
+                          <h4 className="font-semibold mb-2">{word}</h4>
                           <p>{significantWordDefinition || 'Loading...'}</p>
                         </PopoverContent>
                       </Popover>
