@@ -7,12 +7,13 @@ import { Zap } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import axios from 'axios';
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Progress } from "@/components/ui/progress";
 
 const SearchResult = () => {
   const { word } = useParams();
   const [stage, setStage] = useState('countdown');
   const inputRef = useRef(null);
-  const [countdown, setCountdown] = useState(3);
+  const [progress, setProgress] = useState(100);
   const [userInput, setUserInput] = useState('');
   const [result, setResult] = useState(null);
   const [definition, setDefinition] = useState('');
@@ -37,10 +38,25 @@ const SearchResult = () => {
   }, []);
 
   const findSignificantWord = (text) => {
-    const words = text.split(/\s+/);
+    const words = text.split(/\s+/).map(word => word.toLowerCase().replace(/[^a-z]/g, ''));
+    const wordFrequency = {};
+    words.forEach(word => {
+      if (word.length > 2) {
+        wordFrequency[word] = (wordFrequency[word] || 0) + 1;
+      }
+    });
+
     const commonWords = new Set(['the', 'a', 'an', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for', 'of', 'with', 'by', 'from', 'up', 'about', 'into', 'over', 'after']);
-    const uncommonWords = words.filter(word => !commonWords.has(word.toLowerCase()) && word.length > 2);
+    const uncommonWords = Object.keys(wordFrequency).filter(word => !commonWords.has(word));
+
     if (uncommonWords.length > 0) {
+      // Sort by frequency (ascending) and then by length (descending)
+      uncommonWords.sort((a, b) => {
+        if (wordFrequency[a] !== wordFrequency[b]) {
+          return wordFrequency[a] - wordFrequency[b];
+        }
+        return b.length - a.length;
+      });
       setSignificantWord(uncommonWords[0]);
     } else {
       // If no uncommon words are found, pick the longest word
@@ -70,12 +86,20 @@ const SearchResult = () => {
 
   useEffect(() => {
     if (stage === 'countdown') {
-      if (countdown > 0) {
-        const timer = setTimeout(() => setCountdown(countdown - 1), 1000);
-        return () => clearTimeout(timer);
-      } else {
-        setStage('flash');
-      }
+      const startTime = Date.now();
+      const endTime = startTime + 3000; // 3 seconds
+      const updateProgress = () => {
+        const now = Date.now();
+        const remaining = Math.max(0, endTime - now);
+        const newProgress = (remaining / 3000) * 100;
+        setProgress(newProgress);
+        if (newProgress > 0) {
+          requestAnimationFrame(updateProgress);
+        } else {
+          setStage('flash');
+        }
+      };
+      requestAnimationFrame(updateProgress);
     } else if (stage === 'flash') {
       const flashTimer = setTimeout(() => setStage('blackout'), 50);
       return () => clearTimeout(flashTimer);
@@ -85,7 +109,7 @@ const SearchResult = () => {
     } else if (stage === 'input') {
       inputRef.current?.focus();
     }
-  }, [stage, countdown]);
+  }, [stage]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -98,7 +122,7 @@ const SearchResult = () => {
 
   const handleFlashAgain = () => {
     setStage('countdown');
-    setCountdown(3);
+    setProgress(100);
     setResult(null);
     setUserInput('');
   };
@@ -111,13 +135,15 @@ const SearchResult = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black flex items-end justify-center z-50"
+            className="fixed inset-0 bg-black flex flex-col items-center justify-center z-50"
           >
             {stage === 'countdown' && (
-              <div className="text-6xl font-normal text-gray-800 mb-20">{countdown}</div>
+              <div className="w-[800px] bg-gray-200 rounded-full h-2.5 mb-4">
+                <Progress value={progress} className="w-full h-full bg-blue-600 rounded-full" />
+              </div>
             )}
             {stage === 'flash' && (
-              <div className="text-6xl font-bold text-white absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">{decodeURIComponent(word)}</div>
+              <div className="text-6xl font-bold text-white">{decodeURIComponent(word)}</div>
             )}
           </motion.div>
         )}
@@ -158,17 +184,13 @@ const SearchResult = () => {
                       return part; // Return spaces and newlines as is
                     }
                     const word = part.replace(/^[^a-zA-Z]+|[^a-zA-Z]+$/g, '');
-                    const isSignificant = word.toLowerCase() === significantWord.toLowerCase() || 
-                                          (index === 0 && significantWord === ''); // Highlight first word if no significant word found
+                    const isSignificant = word.toLowerCase() === significantWord.toLowerCase();
                     return isSignificant ? (
                       <Popover key={index}>
                         <PopoverTrigger asChild>
                           <span 
                             className="cursor-pointer font-bold text-blue-600 hover:underline"
-                            onClick={() => {
-                              setSignificantWord(word);
-                              fetchSignificantWordDefinition();
-                            }}
+                            onClick={() => fetchSignificantWordDefinition()}
                           >
                             {part}
                           </span>
@@ -178,7 +200,7 @@ const SearchResult = () => {
                           <p>{significantWordDefinition || 'Loading...'}</p>
                         </PopoverContent>
                       </Popover>
-                    ) : part
+                    ) : part;
                   })}
                 </p>
               </div>
