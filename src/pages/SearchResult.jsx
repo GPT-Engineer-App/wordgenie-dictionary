@@ -17,8 +17,6 @@ const SearchResult = () => {
   const [significantWordDefinition, setSignificantWordDefinition] = useState('');
   const [showCountdownBar, setShowCountdownBar] = useState(true);
   const countdownProgress = useMotionValue(100);
-  const [cursorVisible, setCursorVisible] = useState(true);
-
   const fetchDefinition = useCallback(async (word) => {
     try {
       const response = await axios.get(`https://api.dictionaryapi.dev/api/v2/entries/en/${word}`);
@@ -96,15 +94,6 @@ const SearchResult = () => {
   }, [stage]);
 
   useEffect(() => {
-    if (stage === 'input') {
-      const cursorInterval = setInterval(() => {
-        setCursorVisible((prev) => !prev);
-      }, 530);
-      return () => clearInterval(cursorInterval);
-    }
-  }, [stage]);
-
-  useEffect(() => {
     const handleKeyPress = (e) => {
       if (stage === 'input') {
         if (e.key === 'Enter') {
@@ -160,15 +149,17 @@ const SearchResult = () => {
             </div>
           )}
           {stage === 'flash' && (
-            <div className="text-6xl font-bold text-white">{decodeURIComponent(word)}</div>
+            <div className="text-6xl font-bold text-white h-[100px] flex items-center justify-center py-5">
+              {decodeURIComponent(word)}
+            </div>
           )}
           {stage === 'input' && (
-            <div className="flex flex-col items-center">
-              <div className="text-6xl font-bold text-white flex items-center h-[60px] overflow-hidden">
+            <div className="flex flex-col items-center w-full">
+              <div className="text-6xl font-bold text-white flex items-center justify-center h-[100px] py-5 relative">
                 {userInput}
-                {cursorVisible && <span className="animate-blink">|</span>}
+                <span className="absolute right-0 top-1/2 transform -translate-y-1/2 w-[2px] h-[60px] bg-white"></span>
               </div>
-              <p className="text-sm text-gray-400 mt-[60px]">Type what you just saw and then press Enter</p>
+              <p className="text-sm text-gray-400 mt-4">Type what you just saw and then press Enter</p>
             </div>
           )}
           {stage === 'result' && (
