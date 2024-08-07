@@ -121,7 +121,7 @@ const SearchResult = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-r from-blue-100 to-purple-100 p-4">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-emerald-100 via-blue-100 to-purple-100 bg-[length:400%_400%] animate-gradient-xy p-4">
       <AnimatePresence>
         {stage !== 'input' && (
           <motion.div
@@ -153,7 +153,7 @@ const SearchResult = () => {
       {stage === 'input' && (
         <Card className="w-full max-w-2xl">
           <CardHeader>
-            <CardTitle className="text-3xl font-bold text-center text-blue-600">Word Flash Challenge</CardTitle>
+            <CardTitle className="text-3xl font-bold text-center text-emerald-600">Rapid Recall Challenge</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -166,8 +166,8 @@ const SearchResult = () => {
                 className="w-full"
               />
               <div className="flex space-x-2">
-                <Button type="submit" className="flex-1">Check</Button>
-                <Button type="button" onClick={handleFlashAgain} className="flex-1">
+                <Button type="submit" className="flex-1 bg-emerald-700 hover:bg-emerald-800">Check</Button>
+                <Button type="button" onClick={handleFlashAgain} className="flex-1 bg-emerald-700 hover:bg-emerald-800">
                   <Zap className="mr-2 h-4 w-4" /> Flash Again
                 </Button>
               </div>
