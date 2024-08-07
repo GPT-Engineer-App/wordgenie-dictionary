@@ -25,7 +25,7 @@ const SearchResult = () => {
       const flashTimer = setTimeout(() => setStage('blackout'), 50);
       return () => clearTimeout(flashTimer);
     } else if (stage === 'blackout') {
-      const blackoutTimer = setTimeout(() => setStage('input'), 3000);
+      const blackoutTimer = setTimeout(() => setStage('input'), 1000);
       return () => clearTimeout(blackoutTimer);
     }
   }, [stage, countdown]);
@@ -54,7 +54,7 @@ const SearchResult = () => {
             className="fixed inset-0 bg-black flex items-center justify-center z-50"
           >
             {stage === 'countdown' && (
-              <div className="text-6xl font-bold text-white">{countdown}</div>
+              <div className="text-6xl font-normal text-gray-600">{countdown}</div>
             )}
             {stage === 'flash' && (
               <div className="text-6xl font-bold text-white">{decodeURIComponent(word)}</div>
