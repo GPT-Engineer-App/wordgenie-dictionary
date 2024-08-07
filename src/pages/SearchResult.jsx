@@ -88,7 +88,7 @@ const SearchResult = () => {
     if (stage === 'countdown') {
       const timer = setTimeout(() => {
         setStage('flash');
-      }, 4000);
+      }, 2000);
       return () => clearTimeout(timer);
     } else if (stage === 'flash') {
       const flashTimer = setTimeout(() => setStage('blackout'), 50);
@@ -132,7 +132,7 @@ const SearchResult = () => {
                 <motion.div
                   initial={{ width: "100%" }}
                   animate={{ width: "0%" }}
-                  transition={{ duration: 3, ease: "linear" }}
+                  transition={{ duration: 1.5, ease: "linear" }}
                   className="absolute top-0 left-0 h-full bg-blue-600"
                 />
               </div>
